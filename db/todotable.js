@@ -13,7 +13,7 @@ const dbconfig={
 exports.addtodo= function insertTodo(task,cb) {
     const conn = mysql.createConnection(dbconfig);
     conn.query(
-        `insert into todos(task,done) values ("?",false)`,
+        `insert into todos(task,done) values (?,false)`,
         [task],
         (err) =>{
             if(err) throw err;
@@ -29,4 +29,4 @@ exports.showtodo=function selectTodo(cb) {
             if(err) throw err;
             cb(rows);
         }
-    )}
+    )};
