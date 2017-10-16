@@ -8,18 +8,36 @@ const dbconfig={
     password:config.DB.password
 };
 
-
-
 exports.addtodo= function insertTodo(task,cb) {
     const conn = mysql.createConnection(dbconfig);
     conn.query(
-        `insert into todos(task,done) values (?,false);`,
-        [task],
-        (err) =>{
+        `select max(id) i from todos;`,
+        (err,rows)=>{
             if(err) throw err;
-            cb();
+            let mi =rows[0].i;
+            if(mi !=null) {
+                conn.query(
+                    `insert into todos values (?,?,false);`,
+                    [mi+1, task],
+                    (err) => {
+                        if (err) throw err;
+                        cb();
+                    }
+                )
+            }else {
+                conn.query(
+                    `insert into todos values (1,?,false);`,
+                    [task],
+                    (err) => {
+                        if (err) throw err;
+                        cb();
+                    }
+                )
+
+            }
         }
     )
+
 };
 exports.showtodo=function selectTodo(cb) {
     const conn = mysql.createConnection(dbconfig);
@@ -36,6 +54,13 @@ exports.deletetodo=function deleteTodo(id,cb) {
     conn.query(
         `delete from todos where id = ?;`,
         [id],
+        (err) =>{
+            if(err) throw err;
+        }
+    );
+    conn.query(
+         `update todos set id=id-1 where id > ?;`,
+        [id,id],
         (err) =>{
             if(err) throw err;
             cb();
