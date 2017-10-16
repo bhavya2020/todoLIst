@@ -12,5 +12,21 @@ route.post('/add', (req, res) => {
         res.redirect('.')
     })
 });
-
+route.post('/del', (req, res) => {
+    todos.deletetodo(req.body.id, () => {
+        res.redirect('.')
+    })
+});
+route.post('/strike', (req, res) => {
+    if(req)
+    todos.checktodo(req.body.id, () => {
+        res.redirect('.')
+    })
+});
+route.post('/unstrike', (req, res) => {
+    if(req)
+        todos.unchecktodo(req.body.id, () => {
+            res.redirect('.')
+        })
+});
 exports.route = route;
