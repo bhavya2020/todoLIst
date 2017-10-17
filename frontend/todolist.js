@@ -8,9 +8,9 @@ $(function () {
             let d = $("<button>delete</button>");
             d.click(del);
             let up = $("<button>up</button>");
-            // up.click(Up);
+            up.click(Up);
             let down = $("<button>down</button>");
-            // down.click(Down);
+            down.click(Down);
             let cb = $(`<input type="checkbox">`);
             if (todo.done) {
                 cb.change(unstrike);
@@ -32,7 +32,28 @@ $(function () {
                 ul.append(li);
         }
     }
-        function unstrike(event) {
+
+
+        function Up(event) {
+            let index = event.target.parentElement.getAttribute('id');
+            $.post('http://localhost:4444/todos/up',
+                {
+                    id: index
+                },function (data) {
+                showTodos(data);
+            })
+        }
+    function Down(event) {
+        let index = event.target.parentElement.getAttribute('id');
+        $.post('http://localhost:4444/todos/down',
+            {
+                id: index
+            },function (data) {
+                showTodos(data);
+            })
+    }
+
+         function unstrike(event) {
             let index = event.target.parentElement.getAttribute('id');
             $.post('http://localhost:4444/todos/unstrike',
                 {
@@ -59,6 +80,7 @@ $(function () {
                     id: index
                 },
                 function (data) {
+                console.log(data);
                     showTodos(data);
                 })
         }
@@ -75,6 +97,14 @@ $(function () {
             }
         );
         $('#inp').val("")
+    });
+    $("#del").click(function () {
+        $.post(
+            'http://localhost:4444/todos/delete',
+            function (data) {
+                showTodos(data);
+            }
+        );
     })
 
 });

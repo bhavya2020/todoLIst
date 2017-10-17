@@ -39,17 +39,17 @@ exports.addtodo= function insertTodo(task,cb) {
     )
 
 };
-exports.showtodo=function selectTodo(cb) {
+function selectTodo(cb) {
     const conn = mysql.createConnection(dbconfig);
     conn.query(
-        `select * from todos;`,
+        `select * from todos order by id;`,
         (err,rows) =>{
             if(err) throw err;
             cb(rows);
         }
     )};
 
-exports.deletetodo=function deleteTodo(id,cb) {
+function deleteTodo(id,cb) {
     const conn = mysql.createConnection(dbconfig);
     conn.query(
         `delete from todos where id = ?;`,
@@ -89,3 +89,75 @@ exports.unchecktodo=function uncheckTodo(id,cb) {
         }
     )
 };
+exports.delete=function delet(cb) {
+    const conn = mysql.createConnection(dbconfig);
+    conn.query(
+        `select id from todos  where done=true;`,
+        (err,rows) =>{
+            if(err) throw err;
+            for(let x of rows)
+            {
+               console.log(x.id);
+                deleteTodo(x.id,()=>{selectTodo((data)=>{console.log(data)})})
+            }
+            cb();
+        }
+    )
+};
+exports.up=function up(id,cb) {
+    const conn = mysql.createConnection(dbconfig);
+    conn.query(
+        `update todos set id=0 where id = ?;`,
+        [id-1],
+        (err) => { if(err)
+            throw err;
+           }
+    );
+
+    conn.query(
+        `update todos set id=id-1 where id = ?;`,
+        [id],
+        (err) => { if(err)
+            throw err;
+            }
+    );
+    conn.query(
+        `update todos set id=? where id = 0;`,
+        [id],
+        (err) => { if(err)
+            throw err;
+            cb();
+        }
+    );
+
+};
+
+exports.down=function down(id,cb) {
+    const conn = mysql.createConnection(dbconfig);
+    conn.query(
+        `update todos set id=0 where id = ?;`,
+        [parseInt(id)+1],
+        (err) => { if(err)
+            throw err;
+        }
+    );
+
+    conn.query(
+        `update todos set id=id+1 where id = ?;`,
+        [id],
+        (err) => { if(err)
+            throw err;
+        }
+    );
+    conn.query(
+        `update todos set id=? where id = 0;`,
+        [id],
+        (err) => { if(err)
+            throw err;
+            cb();
+        }
+    );
+
+};
+exports.deletetodo=deleteTodo;
+exports.showtodo=selectTodo;
