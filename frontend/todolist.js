@@ -86,18 +86,24 @@ $(function () {
         }
 
     $.get('http://localhost:4444/todos/',(data)=>{showTodos(data)});
-    $("#add").click(function () {
+    $("#inp").on("keypress", function (e) {
+        if (e.keyCode === 13) {  //checks whether the pressed key is "Enter"
+            ajax();
+        }
+    });
+    function ajax() {
         $.post(
             'http://localhost:4444/todos/add',
             {
-             task: $("#inp").val()
+                task: $("#inp").val()
             },
             function (data) {
                 showTodos(data);
             }
         );
         $('#inp').val("")
-    });
+    }
+    $("#add").click(ajax);
     $("#del").click(function () {
         $.post(
             'http://localhost:4444/todos/delete',

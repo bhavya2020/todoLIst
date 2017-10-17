@@ -54,19 +54,20 @@ function deleteTodo(id,cb) {
     conn.query(
         `delete from todos where id = ?;`,
         [id],
-        (err) =>{
+        (err,res) =>{
             if(err) throw err;
-            conn.query(
-                `update todos set id=id-1 where id > ?;`,
-                [id],
-                (err) =>{
-                    if(err) throw err;
-                    cb();
-                }
-            )
-        }
-    );
-
+            console.log(id);
+            console.log(res);
+        });
+    conn.query(
+        `update todos set id=id-1 where id > ?;`,
+        [id],
+        (err,res) =>{
+            if(err) throw err;
+            console.log(id);
+            console.log(res);
+            cb();
+        });
 }
 exports.checktodo=function checkTodo(id,cb) {
     const conn = mysql.createConnection(dbconfig);
@@ -103,8 +104,10 @@ exports.delete=function delet(cb) {
                    console.log(x.id);
                    deleteTodo(x.id, cb);
 
+               }else
+               {
+                   deleteTodo(x.id,()=>{});
                }
-                deleteTodo(x.id,()=>{})
             }
         }
     )
