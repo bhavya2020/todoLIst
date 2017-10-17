@@ -12,6 +12,11 @@ route.post('/add', (req, res) => {
         res.redirect('.')
     })
 });
+route.post('/delete', (req, res) => {
+    todos.delete(() => {
+        res.redirect('.')
+    })
+});
 route.post('/del', (req, res) => {
     todos.deletetodo(req.body.id, () => {
         res.redirect('.')
@@ -28,5 +33,15 @@ route.post('/unstrike', (req, res) => {
         todos.unchecktodo(req.body.id, () => {
             res.redirect('.')
         })
+});
+route.post('/up', (req, res) => {
+    todos.up(req.body.id, () => {
+        res.redirect('.')
+    })
+});
+route.post('/down', (req, res) => {
+    todos.down(req.body.id, () => {
+        res.redirect('.')
+    })
 });
 exports.route = route;
