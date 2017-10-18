@@ -3,7 +3,7 @@ $(function () {
         let ul = $("#list");
         ul.empty();
         for (let todo of list) {
-            let li = $(`<li id="${todo.id}"></li>`);
+            let li = $(`<li id="${todo.od}"></li>`);
             let span = $(`<span> ${todo.task}</span>`);
             let d = $("<button>delete</button>");
             d.click(del);
@@ -25,9 +25,9 @@ $(function () {
                 li.append(cb);
                 li.append(span);
                 li.append(d);
-                if (todo.id != 1)
+                if (todo.od != 1)
                     li.append(up);
-                if (todo.id != list.length)
+                if (todo.od != list.length)
                     li.append(down);
                 ul.append(li);
         }

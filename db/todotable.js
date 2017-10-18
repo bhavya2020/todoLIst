@@ -11,13 +11,13 @@ const dbconfig={
 exports.addtodo= function insertTodo(task,cb) {
     const conn = mysql.createConnection(dbconfig);
     conn.query(
-        `select max(id) i from todos;`,
+        `select max(od) i from todo;`,
         (err,rows)=>{
             if(err) throw err;
             let mi =rows[0].i;
             if(mi !=null) {
                 conn.query(
-                    `insert into todos values (?,?,false);`,
+                    `insert into todo(od,task,done) values (?,?,false);`,
                     [mi+1, task],
                     (err) => {
                         if (err) throw err;
@@ -26,7 +26,7 @@ exports.addtodo= function insertTodo(task,cb) {
                 )
             }else {
                 conn.query(
-                    `insert into todos values (1,?,false);`,
+                    `insert into todo(od,task,done) values (1,?,false);`,
                     [task],
                     (err) => {
                         if (err) throw err;
@@ -42,37 +42,58 @@ exports.addtodo= function insertTodo(task,cb) {
 function selectTodo(cb) {
     const conn = mysql.createConnection(dbconfig);
     conn.query(
-        `select * from todos order by id;`,
+        `select id from todo order by od;`,
         (err,rows) =>{
             if(err) throw err;
-            cb(rows);
+            for(let index in rows)
+            {
+             conn.query(
+                 `update todo set od= ? where id=? `,
+                 [parseInt(parseInt(index)+1),rows[index].id],
+                 (err) =>{
+                     if(err)
+                         throw err;
+                     if(index==rows.length-1)
+                     {
+                         conn.query(
+                             `select * from todo order by od;`,
+                             (err,rows) =>{
+                                 if(err) throw err;
+                                 cb(rows);
+                     }
+                         )
+                     }
+                 }
+             )
+            }
         }
     )};
 
 function deleteTodo(id,cb) {
     const conn = mysql.createConnection(dbconfig);
     conn.query(
-        `delete from todos where id = ?;`,
+        `delete from todo where od = ?;`,
         [id],
-        (err,res) =>{
+        (err) =>{
             if(err) throw err;
-            console.log(id);
-            console.log(res);
-        });
-    conn.query(
-        `update todos set id=id-1 where id > ?;`,
-        [id],
-        (err,res) =>{
-            if(err) throw err;
-            console.log(id);
-            console.log(res);
             cb();
         });
 }
+
+exports.delete=function deletion(cb) {
+    const conn = mysql.createConnection(dbconfig);
+    conn.query(
+        `delete from todo  where done=true;`,
+        (err) =>{
+            if(err) throw err;
+           cb();
+        }
+    )
+};
 exports.checktodo=function checkTodo(id,cb) {
     const conn = mysql.createConnection(dbconfig);
     conn.query(
-        `update todos set done=true where id = ? ;`,
+        `update todo set done=true where od = ? ;`,
         [id],
         (err) =>{
             if(err) throw err;
@@ -83,7 +104,7 @@ exports.checktodo=function checkTodo(id,cb) {
 exports.unchecktodo=function uncheckTodo(id,cb) {
     const conn = mysql.createConnection(dbconfig);
     conn.query(
-        `update todos set done=false where id = ? ;`,
+        `update todo set done=false where od = ? ;`,
         [id],
         (err) =>{
             if(err) throw err;
@@ -91,31 +112,10 @@ exports.unchecktodo=function uncheckTodo(id,cb) {
         }
     )
 };
-exports.delete=function delet(cb) {
-    const conn = mysql.createConnection(dbconfig);
-    conn.query(
-        `select id from todos  where done=true;`,
-        (err,rows) =>{
-            if(err) throw err;
-            for(let x of rows)
-            {
-
-               if(x===rows[rows.length-1]) {
-                   console.log(x.id);
-                   deleteTodo(x.id, cb);
-
-               }else
-               {
-                   deleteTodo(x.id,()=>{});
-               }
-            }
-        }
-    )
-};
 exports.up=function up(id,cb) {
     const conn = mysql.createConnection(dbconfig);
     conn.query(
-        `update todos set id=0 where id = ?;`,
+        `update todo set od=0 where od = ?;`,
         [id-1],
         (err) => { if(err)
             throw err;
@@ -123,14 +123,14 @@ exports.up=function up(id,cb) {
     );
 
     conn.query(
-        `update todos set id=id-1 where id = ?;`,
+        `update todo set od=od-1 where od = ?;`,
         [id],
         (err) => { if(err)
             throw err;
             }
     );
     conn.query(
-        `update todos set id=? where id = 0;`,
+        `update todo set od=? where od = 0;`,
         [id],
         (err) => { if(err)
             throw err;
@@ -143,7 +143,7 @@ exports.up=function up(id,cb) {
 exports.down=function down(id,cb) {
     const conn = mysql.createConnection(dbconfig);
     conn.query(
-        `update todos set id=0 where id = ?;`,
+        `update todo set od=0 where od = ?;`,
         [parseInt(id)+1],
         (err) => { if(err)
             throw err;
@@ -151,14 +151,14 @@ exports.down=function down(id,cb) {
     );
 
     conn.query(
-        `update todos set id=id+1 where id = ?;`,
+        `update todo set od=od+1 where od = ?;`,
         [id],
         (err) => { if(err)
             throw err;
         }
     );
     conn.query(
-        `update todos set id=? where id = 0;`,
+        `update todo set od=? where od = 0;`,
         [id],
         (err) => { if(err)
             throw err;
