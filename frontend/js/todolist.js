@@ -3,16 +3,17 @@ $(function () {
         let ul = $("#list");
         ul.empty();
         for (let todo of list) {
-            console.log(todo);
-            let li = $(`<li id="${todo.od}"></li>`);
-            let span = $(`<span> ${todo.task}</span>`);
-            let d = $("<button>delete</button>");
+            let div=$(`<div id="${todo.od}" class="row"></div>`);
+
+            let li = $(`<li id="${todo.od}" class="list-group-item  ml-5 mr-5 " style="font-size: 3vh;"></li>`);
+            let span = $(`<span class="col-8"> ${todo.task}</span>`);
+            let d = $(`<i class="fa fa-times col"></i>`);
             d.click(del);
-            let up = $("<button>up</button>");
+            let up = $(`<i class="fa fa-chevron-up col"></i>`);
             up.click(Up);
-            let down = $("<button>down</button>");
+            let down = $(`<i class="fa fa-chevron-down col"></i>`);
             down.click(Down);
-            let cb = $(`<input type="checkbox">`);
+            let cb = $(`<input type="checkbox" class="col">`);
             if (todo.done) {
                 cb.change(unstrike);
             }
@@ -23,13 +24,24 @@ $(function () {
                     cb.prop('checked', true);
                     span.css("textDecoration", 'line-through');
                 }
-                li.append(cb);
-                li.append(span);
-                li.append(d);
+                div.append(cb);
+                div.append(span);
+                div.append(d);
                 if (todo.od != 1)
-                    li.append(up);
+                    div.append(up);
+                else
+                {
+                   let t = $(`<span class="col"></span>`);
+                   div.append(t);
+                }
                 if (todo.od != list.length)
-                    li.append(down);
+                    div.append(down);
+                else
+                {
+                    let t = $(`<span class="col"></span>`);
+                    div.append(t);
+                }
+                li.append(div);
                 ul.append(li);
         }
     }
@@ -81,8 +93,7 @@ $(function () {
                     id: index
                 },
                 function (data) {
-                console.log(data);
-                    showTodos(data);
+                   showTodos(data);
                 })
         }
 
@@ -116,83 +127,3 @@ $(function () {
 
 });
 
-// function addTodoInDom (todoValue,done,choice,id) {
-//
-//     let listItem = document.createElement('li');
-//     listItem.setAttribute('class', 'list-group-item  ml-5 mr-5 ');
-//
-//     let color;
-//
-//     if(choice==1) {
-//         color = 'background-color: #cbee7a';
-//     }
-//
-//     if(choice==2) {
-//         color = 'background-color: #faf681';
-//     }
-//     if(choice==3) {
-//         color = 'background-color: #e17555';
-//     }
-//     listItem.setAttribute('style',color+";font-size: 3vh;");
-//
-//
-//     let newListItem = document.createElement('div');
-//     newListItem.setAttribute('data-id', id);
-//     newListItem.setAttribute('class', ' row ');
-//
-//     let checkBox = document.createElement('input');
-//     checkBox.setAttribute('type', 'checkbox');
-//     checkBox.setAttribute('class', 'col');
-//     checkBox.onchange = strike;
-//
-//     let span = document.createElement('span');
-//     span.innerText = todoValue;
-//     span.setAttribute('class', 'col-8');
-//
-//     if (done) {
-//         checkBox.setAttribute('checked', true);
-//         span.style.textDecoration = 'line-through';
-//     }
-//
-//
-//     let x = document.createElement('i');
-//     x.setAttribute('class', 'fa fa-times col');
-//     x.onclick = Delete;
-//     x.setAttribute('style','color: purple');
-//
-//     let u = document.createElement('i');
-//     u.setAttribute('class', 'fa fa-chevron-up col');
-//     u.onclick = UP;
-//     u.setAttribute('style','color: navy');
-//
-//     let d = document.createElement('i');
-//     d.setAttribute('class', 'fa fa-chevron-down col');
-//     d.onclick = DOWN;
-//     d.setAttribute('style','color: navy');
-//
-//     newListItem.appendChild(checkBox);
-//     newListItem.appendChild(span);
-//     newListItem.appendChild(x);
-//     listItem.appendChild(newListItem);
-//     if (id != 0) {
-//         newListItem.appendChild(u);
-//     }
-//     else {
-//         let t = document.createElement('span');
-//         t.setAttribute('class', 'col');
-//         newListItem.appendChild(t);
-//     }
-//
-//     if (id != todoList.list.length - 1) {
-//         newListItem.appendChild(d);
-//     }
-//
-//     else {
-//         let t = document.createElement('span');
-//         t.setAttribute('class', 'col');
-//         newListItem.appendChild(t);
-//     }
-//
-//     list.appendChild(listItem);
-//
-// }
