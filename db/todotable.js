@@ -45,6 +45,8 @@ function selectTodo(cb) {
         `select id from todo order by od;`,
         (err,rows) =>{
             if(err) throw err;
+            if(rows.length==0)
+                cb(rows);
             for(let index in rows)
             {
              conn.query(
